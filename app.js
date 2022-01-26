@@ -79,25 +79,6 @@ app.post('/student/post', function (req, res) {
 
 
 // // updating student
-// app.post('/student/update/:id', (req, res) => {
-//     let id = req.params.id;
-    
-//     studentModel.findByIdAndUpdate(id, {
-//         name: req.body.name,
-//         roll: req.body.roll,
-
-//         mobile: req.body.mobile,
-
-//         classids: req.body.classids
-       
-//     }, (err, result) => {
-//         if (err) {
-//             console.log(error, "error updating student");
-//         } else {
-//             console.log(result, "student updated successfully");
-//         }
-//     })
-// });
 app.put('/student/update/:id',  (req,res)=>{
     console.log(req.body);
     let id = req.params.id;
@@ -119,30 +100,95 @@ app.put('/student/update/:id',  (req,res)=>{
    })
  })
 //student deleting
-app.get('/student/delete/:id', (req, res) => {
-    let id = req.params.id;
-    studentModel.findByIdAndRemove(id, (err, result) => {
-       
-        if (err) {
-            console.log(err, "error deleting student");
-        } else {
-            console.log(success, "student deleted successfully");
-        }
-    })
-});
 app.delete('/student/delete/:id',(req,res)=>{
      
     id = req.params.id;
-    studentModel.findByIdAndDelete({_id:id})
-    .then(()=>{
-        console.log('success')
-        res.send();
-    })
+    studentModel.findByIdAndDelete( id )
+        .then(() => {
+            console.log('success')
+            res.send();
+        })
+        .catch(err => {console.log(err);});
      
   })
 
 
 
 
+
+
+
+
+
+  // class page
+app.get("/class", function (req, res) {
+    classModel.find()
+        .then(function (items) {
+            res.send(items);
+        });
+});
+// class single page
+app.get("/class/single/:id", function (req, res) {
+    const i = req.params.id;
+
+    classModel.findOne({ _id: i })
+        .then(function (item) {
+            res.send(item);
+    })
+}); 
+
+
+
+
+
+
+//class posting
+app.post('/class/post', function (req, res) {
+    var items = {
+        std: req.body.std,
+        div: req.body.div
+        
+    }
+    var saveclassdata = classModel(items);
+    saveclassdata.save((err, success) => {
+        if (err) {
+           console.log(err, "error adding class");
+        } else {
+            console.log(success, "class added successfully");
+        }
+    });
+})
+
+
+// updating class
+app.put('/class/update/:id',  (req,res)=>{
+    console.log(req.body);
+    let id = req.params.id;
+    
+    classModel.findByIdAndUpdate(id, {
+        std: req.body.std,
+        div: req.body.div
+       
+    }, (err, result) => {
+        if (err) {
+            console.log(err, "error updating student");
+        } else {
+            console.log(result, "student updated successfully");
+        }
+   })
+ })
+
+
+
+ //class deleting
+app.delete('/class/delete/:id', (req, res) => {
+     id = req.params.id;
+    classModel.findByIdAndDelete(id)
+        .then(() => {
+            console.log('success')
+            res.send();
+        })
+        .catch(err => { console.log(err); });
+});
 
 app.listen(port, ()=> console.log(`app listening at ${port}`))
